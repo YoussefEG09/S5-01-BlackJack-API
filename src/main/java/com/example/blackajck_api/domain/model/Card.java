@@ -5,23 +5,25 @@ import com.example.blackajck_api.domain.model.enums.Suit;
 
 public class Card {
 
-    private final Suit suit;
-    private final Rank rank;
+    private final String suit;
+    private final String rank;
+    private final int value;
 
-    public Card(Suit suit, Rank rank) {
+    public Card(String suit, String rank, int value) {
         this.suit = suit;
         this.rank = rank;
+        this.value = value;
     }
 
-    public Suit getSuit() {
+    public String getSuit() {
         return suit;
     }
 
-    public Rank getRank() {
+    public String getRank() {
         return rank;
     }
 
     public int getValue() {
-        return rank.getValue();
+        return value;
     }
 }

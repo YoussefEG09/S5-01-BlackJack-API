@@ -16,15 +16,9 @@ public class Hand {
     }
 
     public int getScore() {
-        int score = 0;
-        int aces = 0;
+        int score = cards.stream().mapToInt(Card::getValue).sum();
+        long aces = cards.stream().filter(c -> c.getValue() == 11).count();
 
-        for (Card card : cards) {
-            score += card.getValue();
-            if (card.getRank().name().equals("ACE")) {
-                aces++;
-            }
-        }
         while (score > 21 && aces > 0) {
             score -= 10;
             aces--;
