@@ -1,0 +1,50 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: blackjack-mysql
+    ports:
+      - "3315:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: blackjackdb
+      MYSQL_USER: blackjackuser
+      MYSQL_PASSWORD: blackjackpass
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - blackjack-network
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: blackjack-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - blackjack-network
+
+  blackjack-api:
+    build: .
+    container_name: blackjack-api
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/blackjackdb
+      SPRING_DATASOURCE_USERNAME: blackjackuser
+      SPRING_DATASOURCE_PASSWORD: blackjackpass
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/blackjack
+      SPRING_R2DBC_URL: r2dbc:mysql://mysql-db:3306/blackjackdb
+    depends_on:
+      - mysql-db
+      - mongo-db
+    networks:
+      - blackjack-network
+
+volumes:
+  mysql-data:
+  mongo-data:
+
+networks:
+  blackjack-network:
+    driver: bridge
