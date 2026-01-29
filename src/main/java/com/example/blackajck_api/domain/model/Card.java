@@ -13,9 +13,15 @@ public class Card {
         this.rank = rank;
     }
 
-    public Suit getSuit(){return suit;}
+    public Suit getSuit() {
+        return suit;
+    }
 
-    public Rank getRank(){return rank;}
+    public Rank getRank() {
+        return rank;
+    }
 
-    public int getValue(){return rank.getValue();}
+    public int getValue() {
+        return rank.getValue();
+    }
 }
