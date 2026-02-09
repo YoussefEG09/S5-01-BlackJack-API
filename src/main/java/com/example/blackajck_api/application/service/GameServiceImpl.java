@@ -37,6 +37,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public Mono<Game> getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+                .map(GameMapper::toDomain);
+    }
+
+    @Override
     public Mono<Game> hit(String gameId) {
         return gameRepository.findById(gameId)
                 .map(GameMapper::toDomain)
