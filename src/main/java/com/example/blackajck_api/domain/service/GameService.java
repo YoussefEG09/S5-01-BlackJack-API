@@ -7,6 +7,8 @@ public interface GameService {
 
     Mono<Game> createGame(String playerName);
 
+    Mono<Game> getGameById(String gameId);
+
     Mono<Game> hit(String gameId);
 
     Mono<Game> stand(String gameId);
