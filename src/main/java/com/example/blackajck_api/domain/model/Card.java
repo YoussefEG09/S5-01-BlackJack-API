@@ -5,25 +5,37 @@ import com.example.blackajck_api.domain.model.enums.Suit;
 
 public class Card {
 
-    private final String suit;
-    private final String rank;
-    private final int value;
+    private final Suit suit;
+    private final Rank rank;
 
-    public Card(String suit, String rank, int value) {
+    public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
-        this.value = value;
     }
 
-    public String getSuit() {
+    @Override
+    public String toString() {
+        return rank.name() + "_OF_" + suit.name();
+    }
+
+    public static Card fromString(String value) {
+        String[] parts = value.split("_OF_");
+        return new Card(
+                Suit.valueOf(parts[1]),
+                Rank.valueOf(parts[0])
+        );
+    }
+
+
+    public Suit getSuit() {
         return suit;
     }
 
-    public String getRank() {
+    public Rank getRank() {
         return rank;
     }
 
     public int getValue() {
-        return value;
+        return rank.getValue();
     }
 }

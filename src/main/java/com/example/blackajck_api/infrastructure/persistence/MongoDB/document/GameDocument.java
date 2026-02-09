@@ -6,57 +6,68 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "games")
-public class GameDocument {
+    @Document(collection = "games")
+    public class GameDocument {
 
-    @Id
-    private String id;
+        @Id
+        private String id;
 
-    private String playerId;
-    private String playerName;
+        private String playerName;
 
-    private List<CardDocument> playerHand;
-    private List<CardDocument> dealerHand;
+        private List<String> playerCards;
+        private List<String> dealerCards;
 
-    private boolean finished;
+        private boolean finished;
+        private String result;
 
-    public GameDocument() {
+        public GameDocument() {
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id){
+            this.id = id;
+        }
+
+        public String getPlayerName() {
+            return playerName;
+        }
+
+        public void setPlayerName(String playerName) {
+            this.playerName = playerName;
+        }
+
+        public List<String> getPlayerCards() {
+            return playerCards;
+        }
+
+        public void setPlayerCards(List<String> playerCards) {
+            this.playerCards = playerCards;
+        }
+
+        public List<String> getDealerCards() {
+            return dealerCards;
+        }
+
+        public void setDealerCards(List<String> dealerCards) {
+            this.dealerCards = dealerCards;
+        }
+
+        public boolean isFinished() {
+            return finished;
+        }
+
+        public void setFinished(boolean finished) {
+            this.finished = finished;
+        }
+
+        public String getResult() {
+            return result;
+        }
+
+        public void setResult(String result) {
+            this.result = result;
+        }
     }
-
-    public GameDocument(String playerId, String playerName, List<CardDocument> playerHand,
-                        List<CardDocument> dealerHand, boolean finished) {
-        this.playerId = playerId;
-        this.playerName = playerName;
-        this.playerHand = playerHand;
-        this.dealerHand = dealerHand;
-        this.finished = finished;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getPlayerId() {
-        return playerId;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public List<CardDocument> getPlayerHand() {
-        return playerHand;
-    }
-
-    public List<CardDocument> getDealerHand() {
-        return dealerHand;
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-}

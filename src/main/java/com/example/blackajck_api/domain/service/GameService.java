@@ -1,12 +1,13 @@
 package com.example.blackajck_api.domain.service;
 
+import com.example.blackajck_api.domain.model.Game;
 import reactor.core.publisher.Mono;
 
 public interface GameService {
 
-    Mono<String> createGame(String playerName);
+    Mono<Game> createGame(String playerName);
 
-    Mono<Void> hit(String gameId);
+    Mono<Game> hit(String gameId);
 
-    Mono<Void> stand(String gameId);
+    Mono<Game> stand(String gameId);
 }
