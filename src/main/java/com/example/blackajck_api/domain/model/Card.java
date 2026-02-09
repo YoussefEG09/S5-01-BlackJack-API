@@ -13,29 +13,12 @@ public class Card {
         this.rank = rank;
     }
 
-    @Override
-    public String toString() {
-        return rank.name() + "_OF_" + suit.name();
-    }
-
-    public static Card fromString(String value) {
-        String[] parts = value.split("_OF_");
-        return new Card(
-                Suit.valueOf(parts[1]),
-                Rank.valueOf(parts[0])
-        );
-    }
-
-
-    public Suit getSuit() {
-        return suit;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
     public int getValue() {
         return rank.getValue();
+    }
+
+    @Override
+    public String toString() {
+        return rank.name() + suit.getSymbol();
     }
 }
