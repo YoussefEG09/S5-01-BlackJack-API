@@ -73,18 +73,4 @@ public class GameServiceImpl implements GameService {
                 });
     }
 
-    private void resolveGame(Game game) {
-        int playerScore = game.getPlayerHand().getScore();
-        int dealerScore = game.getDealerHand().getScore();
-
-        if (game.getDealerHand().isBusted()) {
-            game.finish(GameResult.PLAYER_WIN);
-        } else if (playerScore > dealerScore) {
-            game.finish(GameResult.PLAYER_WIN);
-        } else if (playerScore < dealerScore) {
-            game.finish(GameResult.DEALER_WIN);
-        } else {
-            game.finish(GameResult.PUSH);
-        }
-    }
 }
