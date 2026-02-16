@@ -3,7 +3,6 @@ package com.example.blackajck_api.application.service;
 import com.example.blackajck_api.domain.mapper.GameMapper;
 import com.example.blackajck_api.domain.model.Deck;
 import com.example.blackajck_api.domain.model.Game;
-import com.example.blackajck_api.domain.model.Player;
 import com.example.blackajck_api.domain.model.enums.GameResult;
 import com.example.blackajck_api.domain.service.GameService;
 import com.example.blackajck_api.infrastructure.persistence.MongoDB.GameRepository;
@@ -23,56 +22,55 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Mono<Game> createGame(String playerName) {
-        Deck deck = new Deck();
+
         Game game = new Game(playerName);
 
-        game.getPlayerHand().addCard(deck.draw());
-        game.getPlayerHand().addCard(deck.draw());
-        game.getDealerHand().addCard(deck.draw());
+        GameDocument document = GameMapper.toDocument(game);
 
-        GameDocument doc = GameMapper.toDocument(game);
-
-        return gameRepository.save(doc)
+        return gameRepository.save(document)
                 .map(GameMapper::toDomain);
     }
 
     @Override
     public Mono<Game> getGameById(String gameId) {
+
         return gameRepository.findById(gameId)
+                .switchIfEmpty(Mono.error(
+                        new IllegalArgumentException("Game not found")
+                ))
                 .map(GameMapper::toDomain);
     }
 
     @Override
     public Mono<Game> hit(String gameId) {
-        return gameRepository.findById(gameId)
-                .map(GameMapper::toDomain)
-                .map(game -> {
-                    Deck deck = new Deck();
-                    game.getPlayerHand().addCard(deck.draw());
-                    return game;
-                })
-                .flatMap(game ->
-                        gameRepository.save(GameMapper.toDocument(game))
-                                .thenReturn(game)
-                );
+
+        return getGameById(gameId)
+                .flatMap(game -> {
+
+                    game.hit();
+
+                    GameDocument updatedDoc =
+                            GameMapper.toDocument(game);
+
+                    return gameRepository.save(updatedDoc)
+                            .map(GameMapper::toDomain);
+                });
     }
 
     @Override
     public Mono<Game> stand(String gameId) {
-        return gameRepository.findById(gameId)
-                .map(GameMapper::toDomain)
-                .map(game -> {
-                    Deck deck = new Deck();
-                    while (game.getDealerHand().getScore() < 17) {
-                        game.getDealerHand().addCard(deck.draw());
-                    }
-                    resolveGame(game);
-                    return game;
-                })
-                .flatMap(game ->
-                        gameRepository.save(GameMapper.toDocument(game))
-                                .thenReturn(game)
-                );
+
+        return getGameById(gameId)
+                .flatMap(game -> {
+
+                    game.stand();
+
+                    GameDocument updatedDoc =
+                            GameMapper.toDocument(game);
+
+                    return gameRepository.save(updatedDoc)
+                            .map(GameMapper::toDomain);
+                });
     }
 
     private void resolveGame(Game game) {
@@ -80,11 +78,11 @@ public class GameServiceImpl implements GameService {
         int dealerScore = game.getDealerHand().getScore();
 
         if (game.getDealerHand().isBusted()) {
-            game.finish(GameResult.PLAYER_WINS);
+            game.finish(GameResult.PLAYER_WIN);
         } else if (playerScore > dealerScore) {
-            game.finish(GameResult.PLAYER_WINS);
+            game.finish(GameResult.PLAYER_WIN);
         } else if (playerScore < dealerScore) {
-            game.finish(GameResult.DEALER_WINS);
+            game.finish(GameResult.DEALER_WIN);
         } else {
             game.finish(GameResult.PUSH);
         }

@@ -35,6 +35,7 @@ public class GameController {
                 );
     }
 
+
     @GetMapping("/{id}")
     public Mono<ResponseEntity<GameResponseDTO>> getGameById(
             @PathVariable String id
