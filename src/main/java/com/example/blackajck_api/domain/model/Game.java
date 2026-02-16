@@ -1,5 +1,6 @@
 package com.example.blackajck_api.domain.model;
 
+import com.example.blackajck_api.application.exception.GameAlreadyFinishedException;
 import com.example.blackajck_api.domain.model.enums.GameResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Game {
 
     public void hit() {
         if (finished) {
-            throw new IllegalStateException("Game already finished");
+            throw new GameAlreadyFinishedException("Game already finished");
         }
 
         playerHand.addCard(deck.draw());
@@ -46,7 +47,7 @@ public class Game {
 
     public void stand() {
         if (finished) {
-            throw new IllegalStateException("Game already finished");
+            throw new GameAlreadyFinishedException("Game already finished");
         }
 
         while (dealerHand.getScore() < 17) {

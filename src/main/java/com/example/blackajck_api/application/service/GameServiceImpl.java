@@ -1,5 +1,6 @@
 package com.example.blackajck_api.application.service;
 
+import com.example.blackajck_api.application.exception.GameNotFoundException;
 import com.example.blackajck_api.domain.mapper.GameMapper;
 import com.example.blackajck_api.domain.model.Deck;
 import com.example.blackajck_api.domain.model.Game;
@@ -36,7 +37,7 @@ public class GameServiceImpl implements GameService {
 
         return gameRepository.findById(gameId)
                 .switchIfEmpty(Mono.error(
-                        new IllegalArgumentException("Game not found")
+                        new GameNotFoundException("Game not found")
                 ))
                 .map(GameMapper::toDomain);
     }
