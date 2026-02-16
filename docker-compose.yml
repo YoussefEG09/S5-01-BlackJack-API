@@ -1,50 +1,57 @@
+version: '3.9'
+
 services:
   mysql-db:
-    image: mysql:8.0
-    container_name: blackjack-mysql
-    ports:
-      - "3315:3306"
+    image: mysql:8.1
+    container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: blackjackdb
       MYSQL_USER: blackjackuser
       MYSQL_PASSWORD: blackjackpass
-    volumes:
-      - mysql-data:/var/lib/mysql
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3315:3306"
     networks:
       - blackjack-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 10
+
 
   mongo-db:
-    image: mongo:6.0
-    container_name: blackjack-mongo
+    image: mongo:7.0
+    container_name: mongo-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopass
+      MONGO_INITDB_DATABASE: blackjackmongo
     ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
+    - "27017:27017"
     networks:
       - blackjack-network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      retries: 10
+
 
   blackjack-api:
     build: .
     container_name: blackjack-api
-    ports:
-      - "9000:9000"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/blackjackdb
       SPRING_DATASOURCE_USERNAME: blackjackuser
       SPRING_DATASOURCE_PASSWORD: blackjackpass
-      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/blackjack
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql-db:3306/blackjackdb
-    depends_on:
-      - mysql-db
-      - mongo-db
+    ports:
+      - "8080:8080"
     networks:
       - blackjack-network
-
-volumes:
-  mysql-data:
-  mongo-data:
 
 networks:
   blackjack-network:
     driver: bridge
+
