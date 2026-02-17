@@ -5,10 +5,10 @@ services:
     image: mysql:8.1
     container_name: mysql-db
     environment:
-      MYSQL_DATABASE: blackjackdb
-      MYSQL_USER: blackjackuser
-      MYSQL_PASSWORD: blackjackpass
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: blackjack
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
     ports:
       - "3315:3306"
     networks:
@@ -43,13 +43,21 @@ services:
       mysql-db:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/blackjackdb
-      SPRING_DATASOURCE_USERNAME: blackjackuser
-      SPRING_DATASOURCE_PASSWORD: blackjackpass
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/blackjack
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
     ports:
       - "8080:8080"
     networks:
       - blackjack-network
+
+    command: >
+      bash -c "
+       ./wait-for-it.sh blackjack-mysql:3315 && 
+       ./wait-for-it.sh blackjack-mongo:27017 && 
+       sleep 5 &&
+       java -jar app.jar
+      "
 
 networks:
   blackjack-network:
